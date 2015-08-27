@@ -1,7 +1,6 @@
 # Universal Unipolar Stepper Controller
 
-![board](https://raw.github.com/IRNAS/UniversalUnipolarStepperController
-/master/SteperDriverV2.jpg)
+![board](https://raw.githubusercontent.com/IRNAS/UniversalUnipolarStepperController/master/StepperDriverV2.jpg)
 
 The lack of a low-cost stepper controller designed for use with the low-cost motors has motivated us to implement an universal solution with minor optimizations for use in KORUZA. Standalone unipolar motor driver has a number of welcome features:
 
