@@ -20,3 +20,11 @@ Alternative applications discovered thus-far for the controller board are listed
  * open-source microscope automation system
  * optics lab micrometer drive motorization
  * mini 3D printers and robots
+ 
+## Firmware
+
+Developed in Energia environment using MSP430G2955 microcontroller not yet officially supported, thus a bit more work in setting up the build environment. Currently only basic functions work and the firmware implemented is here KORUZA specific, but useful for other projects. GRBL port should happen in the future.
+
+### Communicating with the board
+
+UART communication at 115200 baud. Using EasyTransfer you send the whole data structure to the controller and change next values for where you would like the motors to move. Immediately the controller will reply with the data structure filled out with what next position it is moving to and current position where it is at. Positioning is absolute.
