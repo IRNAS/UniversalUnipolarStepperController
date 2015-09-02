@@ -8,10 +8,11 @@ http://forum.43oh.com/topic/3594-msp430g2955-launchpad-development/?p=47184
 
 This support further modified in \energia-0101E0014\hardware\msp430\variants\spir_g2955\pins_energia.h:
 
-line 106 to: static const uint8_t P2_6 = 29;
-line 377 to: 	P2,  	/* 29 */
-line 421 to: 	BV(6),  	/* 29 */
-
+*/
+// line 106 to: static const uint8_t P2_6 = 29;
+// line 377 to: 	P2,  	/* 29 */
+// line 421 to: 	BV(6),  	/* 29 */
+/*
 Copyright Institute IRNAS Rače 2015 - info@irnas.eu
 
 This program is free software: you can redistribute it and/or modify
@@ -129,12 +130,8 @@ long timeout=0;
 
 boolean write_enable = LOW;
 
-
-
 void setup(){
   Serial.begin(115200);
-  Serial.print("Init, size ");
-  Serial.println(sizeof(struct_motor_t),DEC);
   ETin.begin(details(motor_rx.c), &Serial);
   ETout.begin(details(motor.c), &Serial);
   
@@ -168,7 +165,7 @@ void setup(){
   }
   
   flash_read();
-  
+ 
   // Initialize motors
   stepperX.setCurrentPosition(motor.u.current_x);
   stepperX.setMaxSpeed(motor.u.motor_speed);
@@ -189,7 +186,7 @@ void setup(){
   pinMode(LED_RED, OUTPUT);
   digitalWrite(LED_RED, LOW);
   pinMode(LED_GREEN, OUTPUT);
-  digitalWrite(LED_GREEN, LOW);
+  digitalWrite(LED_GREEN, HIGH);
 
 }
 
@@ -198,7 +195,34 @@ void home_motors(){
       stepperY.move(-100000);
 }
 
+// self tests the motors for rotations, such that assembled boards can be checked
+void self_test(){
+  
+  if(motor.u.current_x==0){
+    motor.u.next_x=10000;
+  }
+  if(motor.u.current_x==10000){
+    motor.u.next_x=0;
+  }
+  
+  if(motor.u.current_y==0){
+    motor.u.next_y=10000;
+  }
+  if(motor.u.current_y==10000){
+    motor.u.next_y=0;
+  }
+  
+  if(motor.u.current_f==0){
+    motor.u.next_f=10000;
+  }
+  if(motor.u.current_f==10000){
+    motor.u.next_f=0;
+  }
+}
+
 void loop(){
+  // enable to test correct board operation
+  // self_test();
 
   //receive data and reply if received
   if(ETin.receiveData()){
@@ -209,28 +233,25 @@ void loop(){
     // if command is 0 for normal operation
     if(motor_rx.u.command==0){      
       if(motor_rx.u.next_x<0){
-        motor_rx.u.next_x=0;
+        motor.u.next_x=0;
       }
       else{
         motor.u.next_x=motor_rx.u.next_x;
       }
       
       if(motor_rx.u.next_y<0){
-        motor_rx.u.next_y=0;
+        motor.u.next_y=0;
       }
       else{
         motor.u.next_y=motor_rx.u.next_y;
       }
       
       if(motor_rx.u.next_f<0){
-        motor_rx.u.next_f=0;
+        motor.u.next_f=0;
       }
       else{
         motor.u.next_f=motor_rx.u.next_f;
-      }
-      stepperX.moveTo(motor_rx.u.next_x);
-      stepperY.moveTo(motor_rx.u.next_y);
-      stepperF.moveTo(motor_rx.u.next_f);
+      }      
    }
     
     //reply
@@ -239,7 +260,10 @@ void loop(){
   }
   digitalWrite(LED_RED, LOW);
   
-  motor.u.next_x=motor_rx.u.next_x;
+  //update target location of motors
+  stepperX.moveTo(motor.u.next_x);
+  stepperY.moveTo(motor.u.next_y);
+  stepperF.moveTo(motor.u.next_f);
  
   //run motors
   motor.u.status_x=runm(&stepperX,&motor.u.current_x,X_MIN);
