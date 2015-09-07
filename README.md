@@ -12,9 +12,9 @@ The lack of a low-cost stepper controller designed for use with the low-cost mot
  * unified serial connector for all interfaces
  * STATUS: operational prototype
  
-Micro-controller has been chosen based on cost and pin number as well as availability in a sufficiently friendly package, however increasing the software development effort. Current revision has been tested wit custom Energia code, however we aim to port to it [GRBL](https://github.com/grbl/grbl) firmware and thus make it directly interfacable from computer.
+Micro-controller has been chosen based on cost and pin number as well as availability in a sufficiently friendly package, however increasing the software development effort. Current revision has been tested with custom Energia code, however we aim to port to it [GRBL](https://github.com/grbl/grbl) firmware and thus make it directly interfacable from computer.
 
-Alternative applications discovered thus-far for the controller board are listed below. We are always looking for ideas and people who would like to use it in their system, do ge tin touch:
+Alternative applications discovered thus-far for the controller board are listed below. We are always looking for ideas and people who would like to use it in their system, do get in touch:
 
  * 3D printer auto bed-levelling system
  * open-source microscope automation system
