@@ -49,7 +49,7 @@ struct __attribute__ ((packed)) struct_motor_t{
   uint8_t command;
   uint8_t flash_status;
   uint8_t flash_write_count;
-  uint8_t empty2;
+  uint8_t gpio;
   uint8_t empty3;
 };
 // Big warning, struct must be packed for use cross-platform between 8bit, 16bit and 32bit devices
@@ -85,11 +85,101 @@ void setup(){
   digitalWrite(LED_GREEN, HIGH);
   randomSeed(analogRead(0));
   motor_tx.u.command=0;
-  time_stored=millis();
+  time_stored=0;
+  motor_rx.u.current_x=1;
+  motor_rx.u.current_y=1;
 }
 
+char state=0;
+
 void loop(){
+  // this test code performs the following operations
+  // sets the acceleration and speed
+  // moves motors to a position
+  // homes X and Y in negative direction
+  // creates repeated squares movemenet
+  switch (state) {
+    case 0:
+      motor_tx.u.motor_accel=5000;
+      motor_tx.u.motor_speed=300;
+      motor_tx.u.command=4;
+      state=1;
+      break;
+    case 1:
+      motor_tx.u.next_x=10000;
+      motor_tx.u.next_y=10000;
+      motor_tx.u.command=0;
+      if((motor_rx.u.current_x==10000)&(motor_rx.u.current_y==10000)){
+        state=2;
+      }
+      break;
+    case 2:
+      //home
+      motor_tx.u.command=2;
+      if((motor_rx.u.current_x==0)&(motor_rx.u.current_y==0)){
+        state=3;
+        motor_tx.u.command=0;
+      }
+      break;
+    case 3:
+      //move square
+      motor_tx.u.next_x=10000;
+      motor_tx.u.next_y=10000;
+      motor_tx.u.command=0;
+      motor_tx.u.gpio=1;
+      if((motor_rx.u.current_x==motor_tx.u.next_x)&&(motor_rx.u.current_y==motor_tx.u.next_y)){
+        state++;
+      }
+      break;
+    case 4:
+      //move square
+      motor_tx.u.next_x=20000;
+      motor_tx.u.next_y=10000;
+      motor_tx.u.command=0;
+      if((motor_rx.u.current_x==motor_tx.u.next_x)&&(motor_rx.u.current_y==motor_tx.u.next_y)){
+        state++;
+      }
+      break;
+    case 5:
+      //move square
+      motor_tx.u.next_x=20000;
+      motor_tx.u.next_y=20000;
+      motor_tx.u.command=0;
+      if((motor_rx.u.current_x==motor_tx.u.next_x)&&(motor_rx.u.current_y==motor_tx.u.next_y)){
+        state++;
+      }
+      break;
+    case 6:
+      //move square
+      motor_tx.u.next_x=10000;
+      motor_tx.u.next_y=20000;
+      motor_tx.u.command=0;
+      if((motor_rx.u.current_x==motor_tx.u.next_x)&&(motor_rx.u.current_y==motor_tx.u.next_y)){
+        state=3;
+      }
+      break;
+    default:
+      // if nothing else matches, do the default
+      // default is optional
+    break;
+  }
+
+
+/*
+  if(motor_rx.u.current_x>45000){
+    motor_tx.u.gpio=1;
+  }
+  else{
+    motor_tx.u.gpio=1;
+  }
   
+  if(motor_rx.u.current_x<5000){
+    motor_tx.u.gpio=1;
+  }
+  else{
+    motor_tx.u.gpio=0;
+  }
+
   // here sending some commands for testing each axis
   if(motor_rx.u.current_x==0){
     motor_tx.u.next_x=50000;
@@ -107,13 +197,13 @@ void loop(){
     motor_tx.u.next_y=0;
   }
   
-   if(motor_rx.u.current_f==0){
+  if(motor_rx.u.current_f==0& time_stored<millis()){
     motor_tx.u.next_f=10000;
   }
   else if(motor_rx.u.current_f==10000){
     motor_tx.u.next_f=0;
   }
-
+*/
   //send the data
   digitalWrite(LED, HIGH);
   ETout.sendData();
@@ -135,25 +225,33 @@ void dump_motor_variables(){
   Serial.print("Current x: ");
   Serial.println(motor_rx.u.current_x);
   Serial.print("Next x: ");
-  Serial.println(motor_rx.u.next_x);
-  Serial.print("Status x: ");
-  Serial.println(motor_rx.u.status_x);
+  Serial.println(motor_tx.u.next_x);
+  Serial.print("Status x: 0x");
+  Serial.println(motor_rx.u.status_x,HEX);
   Serial.print("Current y: ");
   Serial.println(motor_rx.u.current_y);
   Serial.print("Next y: ");
-  Serial.println(motor_rx.u.next_y);
-  Serial.print("Status y: ");
-  Serial.println(motor_rx.u.status_y);
+  Serial.println(motor_tx.u.next_y);
+  Serial.print("Status y: 0x");
+  Serial.println(motor_rx.u.status_y,HEX);
   Serial.print("Current f: ");
   Serial.println(motor_rx.u.current_f);
   Serial.print("Next f: ");
   Serial.println(motor_rx.u.next_f);
   Serial.print("Status f: ");
   Serial.println(motor_rx.u.status_f);
+  Serial.print("Speed: ");
+  Serial.println(motor_rx.u.motor_speed);
+  Serial.print("Accel: ");
+  Serial.println(motor_rx.u.motor_accel);
   Serial.print("Command: ");
   Serial.println(motor_rx.u.command);
+  Serial.print("Command tx: ");
+  Serial.println(motor_tx.u.command);
   Serial.print("Flash: ");
   Serial.println(motor_rx.u.flash_status,HEX);
   Serial.print("Flash write count: ");
   Serial.println(motor_rx.u.flash_write_count,DEC);
+  Serial.print("State: ");
+  Serial.println(state,DEC);
 }
