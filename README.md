@@ -1,5 +1,13 @@
 # Universal Unipolar Stepper Controller
 
+Here you can find documentation for universal controller for unipolar stepper motors with encoders and end switches.
+
+Check  repository [koruza-instructions](https://github.com/IRNAS/KORUZA-instructions) if you are looking for documentation on how to assemble and use Koruza system. See [project website](http://koruza.net/) for complete specification and introduction.
+
+Should you need any support with KORUZA system, get in touch with Institute IRNAS team and others involved in the project via [chat](https://chat.irnas.eu/) or [forum](http://forum.irnas.eu/).
+
+---
+
 ![board](https://raw.githubusercontent.com/IRNAS/UniversalUnipolarStepperController/master/StepperDriverV2.jpg)
 
 ![board](https://raw.githubusercontent.com/IRNAS/UniversalUnipolarStepperController/master/unipolar_connections_sch.png)
