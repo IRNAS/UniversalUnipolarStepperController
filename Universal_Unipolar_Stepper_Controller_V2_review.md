@@ -6,11 +6,19 @@ Revision of hardware and software for Universal Unipolar Stepper Controller. The
 - better power supply for microcontroller and laser, change linear to switching
 - measurement of consumption 
 - unipolar and bipolar stepper drivers (unipolar is must have)
-- board dimension smaller then 50x50 mm 
+- board dimension smaller then 50x50 mm
 - all current connectors should be on the new board
 - native USB on microcontroller and USB connector on board
 - developed with open source software
 - Arduino or something similar compatible
+
+#### Typical use-cases
+- [KORUZA project](http://koruza.net/)
+- open-source microscope automation system
+- optics lab micrometer drive motorization
+- mini 3D printers and robots
+- CNC machines, etc.
+
 
 ## 1. Microcontroller (ARM)
 Currently there is MSP430G2955 controler on the stepper driver board. This controler costs 3.19 USD, and we want to put cheaper one. Because of the main guidelines from above and new firmware (this will be discussed in Firmware section), microcontroller requirements are:
